@@ -63,23 +63,32 @@ class App extends Component {
       if (err) console.log(err)
       else {
         this.setState({
-          tokenBalance: +res,
+          tokenBalance: +res / 1e18,
           tokenBalanceAtAddress: address
         })
       }
     })
   }
 
-  handleSubmit = (e) => {
+  handleWalletAddressSubmit = (e) => {
     e.preventDefault();
     this.getTokenBalance(this.addressInput.value);
   }
+
+  handleEtherDepositSubmit = (e) => {
+    e.preventDefault();
+    crowdsaleContractInstance.buyTokens
+    .sendTransaction(this.state.account, {value: window.web3.toWei(this.etherAmountInput.value, 'ether')}, (err, res) => {
+      if (err) console.log(err)
+    })
+  }
+
 
   render() {
     return (
       <div className='App'>
         <header className='App-header'>
-          <h1 className='App-title'>Welcome to ABC ICO</h1>
+          <h1 className='App-title'>Welcome to Sample ICO</h1>
         </header>
         <div className='App-intro'>
           <p className="App-content">
@@ -92,7 +101,15 @@ class App extends Component {
           <p className="App-content">
             Total token in supply: {this.state.totalSupply} tokens
           </p>
-          <form className="form-inline App-content" onSubmit={this.handleSubmit}>
+          <form className="form-inline App-content" onSubmit={this.handleEtherDepositSubmit}>
+            <div className="form-group">
+              To buy tokens: {' '}
+              <input type="text" className="" required ref={(input) => this.etherAmountInput = input} placeholder="Enter ether amount here" />
+              {' '}
+              <input type="submit" className="btn btn-success add-btn" value="Submit" />
+            </div>
+          </form>
+          <form className="form-inline App-content" onSubmit={this.handleWalletAddressSubmit}>
             <div className="form-group">
               To get token balance: {' '}
               <input type="text" className="" required ref={(input) => this.addressInput = input} placeholder="Enter wallet address here" />
