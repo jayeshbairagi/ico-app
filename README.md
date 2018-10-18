@@ -12,3 +12,5 @@ enter the amount of ethers you want to buy for.
 6. Metamask plugin will pop up and you can sign the transaction using metamask.
 7. After signing the transaction, you can go to metamask plugin and check the last
 transaction hash on etherscan
+
+Working demo heroku link: https://simpleico.herokuapp.com
