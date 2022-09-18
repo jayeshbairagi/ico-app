@@ -1,29 +1,22 @@
+import Web3 from 'web3'
 import React, { Component } from 'react'
-import crowdsaleContract from './constants/crowdsaleContract'
-import tokenContract from './constants/tokenContract'
+
 import './App.css'
+import tokenContract from './constants/tokenContract'
+import crowdsaleContract from './constants/crowdsaleContract'
 
-let crowdsaleContractInstance
-let tokenContractInstance
+let tokenContractInstance;
+let crowdsaleContractInstance;
 
-if (window.web3) {
-  crowdsaleContractInstance = window.web3.eth.contract(crowdsaleContract.abi).at(crowdsaleContract.address)
-  tokenContractInstance = window.web3.eth.contract(tokenContract.abi).at(tokenContract.address)
+if (window.ethereum) {
+  window.ethereum.enable();
+  window.web3 = new Web3(window.ethereum);
+  tokenContractInstance = new window.web3.eth.Contract(tokenContract.abi, tokenContract.address).methods;
+  crowdsaleContractInstance = new window.web3.eth.Contract(crowdsaleContract.abi, crowdsaleContract.address).methods;
 }
 
 class App extends Component {
   constructor(props) {
-    super(props)
-    this.state = {
-      ethRaised: 0,
-      account: 0,
-      tokenBalance: 0,
-      totalSupply: 0,
-      tokenBalanceAtAddress: null
-    }
-  }
-
-  componentWillMount() {
     window.web3.eth.getAccounts((err, res) => {
       if (err) console.log(err)
       else {
@@ -33,41 +26,55 @@ class App extends Component {
         this.getTokenBalance(res[0])
       }
     })
+    super(props)
+    this.state = {
+      ethRaised: 0,
+      account: 0,
+      tokenBalance: 0,
+      totalSupply: 0,
+      tokenBalanceAtAddress: null
+    }
 
-    tokenContractInstance.totalSupply((err, res) => {
-      if (err) console.log(err)
-      else {
-        this.setState({
-          totalSupply: +res / 1e18
-        })
-      }
-    })
-    this.updateEtherRaised()
-
+    this.calculateTotalSupply();
+    this.updateEtherRaised();
   }
 
-  updateEtherRaised = (e) => {
+  calculateTotalSupply = async () => {
+    try {
+      const totalSupply = await tokenContractInstance.totalSupply().call();
+      this.setState({
+        totalSupply: +totalSupply / 1e18
+      })
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  updateEtherRaised = async (e) => {
     if (e) e.preventDefault();
-    crowdsaleContractInstance.weiRaised((err, res) => {
-      if (err) console.log(err)
-      else {
-        this.setState({
-          ethRaised: +res / 1e18
-        })
-      }
-    })
+    try {
+      const weiRaised = await crowdsaleContractInstance.weiRaised().call()
+      this.setState({
+        ethRaised: +weiRaised / 1e18
+      })
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
-  getTokenBalance = (address) => {
-    tokenContractInstance.balanceOf(address, (err, res) => {
-      if (err) console.log(err)
-      else {
-        this.setState({
-          tokenBalance: +res / 1e18,
-          tokenBalanceAtAddress: address
-        })
-      }
-    })
+  getTokenBalance = async (address) => {
+    try {
+      const balanceOf = await tokenContractInstance.balanceOf(address).call()
+      this.setState({
+        tokenBalance: +balanceOf / 1e18,
+        tokenBalanceAtAddress: address
+      })
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   handleWalletAddressSubmit = (e) => {
@@ -77,12 +84,13 @@ class App extends Component {
 
   handleEtherDepositSubmit = (e) => {
     e.preventDefault();
-    crowdsaleContractInstance.buyTokens
-    .sendTransaction(this.state.account, {value: window.web3.toWei(this.etherAmountInput.value, 'ether')}, (err, res) => {
+    crowdsaleContractInstance.buyTokens(this.state.account).send({
+      from: this.state.account,
+      value: window.web3.utils.toWei(this.etherAmountInput.value, 'ether')
+    }, (err, res) => {
       if (err) console.log(err)
     })
   }
-
 
   render() {
     return (

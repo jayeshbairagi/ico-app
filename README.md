@@ -3,7 +3,7 @@
 Steps to try demo –
 1. You need the metamask or mist plugin for google chrome to interact with the dapp.
 2. The contracts have been deployed to the rinkeby network. So you need to get some
-rinkeby testnet ether. https://www.rinkeby.io/#faucet
+rinkeby testnet ether using [faucet](https://rinkebyfaucet.com/).
 3. After getting rinkeby testnet ether, navigate to the dapp. It is a very simplistic design to
 give an idea.
 4. You can see the total ether raised and the total tokens in supply.
@@ -13,4 +13,4 @@ enter the amount of ethers you want to buy for.
 7. After signing the transaction, you can go to metamask plugin and check the last
 transaction hash on etherscan
 
-Working demo heroku link: https://simpleico.herokuapp.com
+Working demo heroku link: https://jayeshbairagi.github.io/ico-app/
