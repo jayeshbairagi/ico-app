@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ico-app/static/css/main.caf00a3d.css",
+    "main.js": "/ico-app/static/js/main.9dedc4be.js",
+    "index.html": "/ico-app/index.html",
+    "main.caf00a3d.css.map": "/ico-app/static/css/main.caf00a3d.css.map",
+    "main.9dedc4be.js.map": "/ico-app/static/js/main.9dedc4be.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.caf00a3d.css",
+    "static/js/main.9dedc4be.js"
+  ]
+}
